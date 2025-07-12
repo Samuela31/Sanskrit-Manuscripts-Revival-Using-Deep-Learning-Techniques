@@ -1,0 +1,42 @@
+!pip install pytesseract
+!sudo apt install tesseract-ocr
+!git clone https://github.com/tesseract-ocr/tessdata_best.git
+!ls tessdata_best
+
+
+import cv2
+import pytesseract
+import re
+import string
+from google.colab.patches import cv2_imshow
+import os
+
+os.environ['TESSDATA_PREFIX'] = '/content/tessdata_best/'
+
+# load the original image and destroyed/input image
+print("Original image")
+image1 = cv2.imread("td.png")
+cv2_imshow(image1)
+
+print("Destroyed image")
+image2 = cv2.imread("blurredtd.png")
+cv2_imshow(image2)
+
+def extract_text_from_image(image):
+    #Use Optical Character Recognition (OCR) to extract text from the image.
+    text = pytesseract.image_to_string(image)
+    return text
+
+#Text preprocessing functions
+def clean_and_tokenize_text(text):
+    #Remove unwanted characters, punctuation, and whitespace.
+    text = re.sub(f"[{string.punctuation}]", "", text)
+    text = " ".join(text.split())
+    return text
+
+#Extract and clean text from the binary image using OCR
+extracted_text = pytesseract.image_to_string(image2, lang='san')
+cleaned_and_tokenized_text = clean_and_tokenize_text(extracted_text)
+
+print(extracted_text)
+print(cleaned_and_tokenized_text)
